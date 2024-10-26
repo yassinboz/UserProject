@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class JwtService {
     @Value("${application.security.jwt.expiration}")
 
-    private long jwtExpiration = 864000000;
+    private long jwtExpiration          ;
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
@@ -58,7 +58,7 @@ return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private String extractUsername(String token) {
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
 
     }

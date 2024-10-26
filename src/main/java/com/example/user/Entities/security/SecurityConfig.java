@@ -13,25 +13,31 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 
 public class SecurityConfig {
-    private JwtFilter jwtAuthFilter;
+    private final JwtFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults())
+    public SecurityFilterChain securityFilterChain(HttpSecurity  http) throws Exception {
+        http
+                .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeRequests(req ->
+                .authorizeHttpRequests(req ->
                         req.requestMatchers("").permitAll().anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session  -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-    }
+        return http.build();
+
+    }}
 
 
